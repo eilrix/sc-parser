@@ -1,5 +1,5 @@
 {
-    "email": "you_soundcloud_email",
+    "email": "your_soundcloud_email",
     "password": "your_password",
     "target": "user-00000000",
     "concurrency": 4,
