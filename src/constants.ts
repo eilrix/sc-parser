@@ -7,6 +7,7 @@ export type TConfig = {
     password: string;
     target: string;
     concurrency: number;
+    timeRange: number;
 }
 export type TTrack = {
     link: string;
@@ -17,20 +18,21 @@ export type TDatabase = {
     tracks: TTrack[];
     unreposted: TTrack[];
     following: string[];
+    lastPlaylist?: string;
 }
+export type TCommand = 'continue' | 'start' | undefined;
+export const command: TCommand = (process.argv[2] as TCommand) ?? 'start';
 
 export const config: TConfig = fs.readJSONSync(resolve(process.cwd(), 'config.json'));
 export const sleep = (time: number) => new Promise(done => setTimeout(done, time * 1000));
 
-// 6 months
-export const trackDateMin = new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 * 5);
+export const trackDateMin = new Date(Date.now() - 1000 * config.timeRange);
 
 export const databasePath = resolve(process.cwd(), 'data/db.json');
-export const database: TDatabase = fs.pathExistsSync(databasePath) ? fs.readJSONSync(databasePath) : {
-    unreposted: [],
-    tracks: [],
-    following: [],
-};
+export const database: TDatabase = fs.pathExistsSync(databasePath) ? fs.readJSONSync(databasePath) : {};
+if (!database.unreposted) database.unreposted = [];
+if (!database.tracks) database.tracks = [];
+if (!database.following) database.following = [];
 
 export const saveDatabase = async () => await fs.outputJSON(databasePath, database, {
     spaces: 2

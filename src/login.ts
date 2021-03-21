@@ -3,12 +3,15 @@ import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
 import { config, cookiesPath, sleep, localStoragePath, click as pageClick, waitFor as pageWaitFor } from './constants';
 
-export const logIn = async (page: Page) => {
-    await page.goto('https://soundcloud.com/');
-    await page.bringToFront();
-    const waitFor = (selector: string) => pageWaitFor(page, selector);
-    const click = (selector: string) => pageClick(page, selector);
+const saveSession = async (page: Page) => {
+    const newCookies = await page.cookies();
+    await fs.outputJSON(cookiesPath, newCookies);
 
+    const newLocalStorage = await page.evaluate(() => Object.assign({}, window.localStorage));
+    await fs.outputJSON(localStoragePath, newLocalStorage);
+}
+
+const loadSession = async (page: Page): Promise<boolean> => {
     const oldCookies = (await fs.pathExists(cookiesPath)) ? await fs.readJSON(cookiesPath) : null;
     const oldLocalStorage = (await fs.pathExists(localStoragePath)) ? await fs.readJSON(localStoragePath) : null;
     if (oldCookies && oldLocalStorage) {
@@ -31,11 +34,22 @@ export const logIn = async (page: Page) => {
 
             if (homeEl) {
                 // we're successfully authorized via old session
-                return;
+                await saveSession(page);
+                return true;
             }
         } catch (e) { }
     }
+    return false;
+}
 
+export const logIn = async (page: Page) => {
+    await page.goto('https://soundcloud.com/');
+    await page.bringToFront();
+    const waitFor = (selector: string) => pageWaitFor(page, selector);
+    const click = (selector: string) => pageClick(page, selector);
+
+    const success = await loadSession(page);
+    if (success) return;
 
     await page.goto('https://soundcloud.com/');
 
@@ -64,10 +78,5 @@ export const logIn = async (page: Page) => {
     await page.goto('https://soundcloud.com/you/library');
     await waitFor('.l-collection');
 
-    const newCookies = await page.cookies();
-    await fs.outputJSON(cookiesPath, newCookies);
-
-    const newLocalStorage = await page.evaluate(() => Object.assign({}, window.localStorage));
-    await fs.outputJSON(localStoragePath, newLocalStorage);
-
+    await saveSession(page);
 }

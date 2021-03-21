@@ -2,7 +2,7 @@ import puppeteerExtra from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
-import { config, database, saveDatabase } from './constants';
+import { config, database, saveDatabase, command } from './constants';
 import { logIn } from './logIn';
 import { parseFollowing } from './parseFollowing';
 import { parseTracks } from './parseTracks';
@@ -17,31 +17,33 @@ const main = async () => {
         args: ['--no-sandbox'],
         timeout: 1000,
         // headless: false,
-        slowMo: 150,
+        slowMo: 250,
     });
     await Promise.all(Array(config.concurrency - 1).fill(1).map(_it => browser.newPage()));
     const pages: Page[] = await browser.pages();
 
-    const following = await parseFollowing(pages[0]);
-    database.following = following;
-    console.log('following', following);
+    if (command === 'start') await startTask(pages);
+    if (command === 'continue') await continueTask(pages);
 
+    await browser.close();
+};
 
-    await parseTracks(pages, following);
-
-
-    console.log('\nParsing is done!');
-    console.log(`Found ${database.unreposted.length} new tracks\n`)
-    await saveDatabase();
+const startTask = async (pages: Page[]) => {
+    await parseFollowing(pages[0]);
+    await parseTracks(pages);
 
     if (database.unreposted.length === 0) return;
 
     await logIn(pages[0]);
-
     await saveTracks(pages);
+}
 
-    await saveDatabase();
-    await browser.close();
-};
+const continueTask = async (pages: Page[]) => {
+    if (database.unreposted.length > 0) {
+        console.log('Continue adding tracks: ' + database.unreposted.length);
+        await logIn(pages[0]);
+        await saveTracks(pages);
+    }
+}
 
 main();

@@ -7,22 +7,22 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "moduleResolution": "node",
-        "incremental": true,
         "skipLibCheck": true,
         "outDir": "./build",
+        "declaration": true,
+        "declarationDir": "./build",
         "lib": [
             "es5",
             "es6",
             "dom"
         ],
         "allowJs": true,
-        "jsx": "react",
     },
     "include": [
         "src/**/*.ts",
-        "src/**/*.tsx"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "build"
     ]
 }

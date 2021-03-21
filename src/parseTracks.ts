@@ -2,10 +2,7 @@ import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
 import { concurrentFlows, database, saveDatabase, trackDateMin, TTrack, sleep } from './constants';
 
-export const parseTracks = async (pages: Page[], following: string[]) => {
-
-    let totalNewTracks: TTrack[] = [];
-
+export const parseTracks = async (pages: Page[]) => {
     let isWorking = true;
 
     (async () => {
@@ -18,7 +15,9 @@ export const parseTracks = async (pages: Page[], following: string[]) => {
         }
     })();
 
-    await concurrentFlows(pages.length, following, async (artist, flowNum) => {
+    let parsed = 0;
+
+    await concurrentFlows(pages.length, database.following, async (artist, flowNum) => {
         const page = pages[flowNum];
         try {
             await page.goto(`${artist}/tracks`);
@@ -62,14 +61,17 @@ export const parseTracks = async (pages: Page[], following: string[]) => {
             return newTracks;
         }, trackDateMin.toISOString());
 
-        const newTracks = tracks.filter(newTrack => !database.tracks.some(track => track.link === newTrack.link));
+        let newTracks = tracks.filter(newTrack => !database.tracks.some(track => track.link === newTrack.link));
+        newTracks = newTracks.filter(newTrack => !database.unreposted.some(track => track.link === newTrack.link));
+        parsed++;
+
+        console.log(`Checking: ` + artist);
 
         if (newTracks.length > 0) {
-            console.log(`\nFound ${newTracks.length} new tracks for author: ${artist}`);
+            console.log(`Found ${newTracks.length} new tracks for author: ${artist}`);
         }
 
-        newTracks.forEach(track => totalNewTracks.push(track));
-
+        console.log(`${parsed} / ${database.following.length}\n`);
 
         newTracks.forEach(track => {
             if (!database.unreposted.some(t => t.link === track.link)) {
@@ -78,7 +80,11 @@ export const parseTracks = async (pages: Page[], following: string[]) => {
         });
 
         await saveDatabase();
-    })
+    });
 
     isWorking = false;
+
+    console.log('\nParsing following is done!');
+    console.log(`Found ${database.unreposted.length} new tracks\n`);
+    await saveDatabase();
 }

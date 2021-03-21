@@ -1,8 +1,9 @@
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
-import { config } from './constants';
+import { config, database, saveDatabase } from './constants';
 
 export const parseFollowing = async (page: Page): Promise<string[]> => {
+    console.log('Parsing following...')
     await page.goto(`https://soundcloud.com/${config.target}/following`);
 
     const links = await page.evaluate(async () => {
@@ -18,5 +19,9 @@ export const parseFollowing = async (page: Page): Promise<string[]> => {
         );
         return links.filter(Boolean) as string[];
     });
+
+    database.following = links;
+    console.log('Following: ', links);
+    await saveDatabase();
     return links;
 }
