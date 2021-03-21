@@ -2,6 +2,6 @@
     "email": "your_soundcloud_email",
     "password": "your_password",
     "target": "user-00000000",
-    "concurrency": 4,
     "timeRange": 12960000
+    "concurrency": 4,
 }

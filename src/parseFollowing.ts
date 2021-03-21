@@ -1,6 +1,6 @@
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
-import { config, database, saveDatabase } from './constants';
+import { config, database, saveDatabase } from './shared';
 
 export const parseFollowing = async (page: Page): Promise<string[]> => {
     console.log('Parsing following...')

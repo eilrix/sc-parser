@@ -2,7 +2,7 @@ import puppeteerExtra from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
-import { config, database, saveDatabase, command } from './constants';
+import { config, database, saveDatabase, command } from './shared';
 import { logIn } from './logIn';
 import { parseFollowing } from './parseFollowing';
 import { parseTracks } from './parseTracks';

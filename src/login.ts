@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
-import { config, cookiesPath, sleep, localStoragePath, click as pageClick, waitFor as pageWaitFor } from './constants';
+import { config, cookiesPath, sleep, localStoragePath, click as pageClick, waitFor as pageWaitFor } from './shared';
 
 const saveSession = async (page: Page) => {
     const newCookies = await page.cookies();

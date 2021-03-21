@@ -15,8 +15,8 @@ Create config.json as following:
     "email": "your_soundcloud_email",
     "password": "your_password",
     "target": "user-00000000",
-    "concurrency": 4,
-    "timeRange": 12960000
+    "timeRange": 12960000,
+    "concurrency": 4
 }
 ```
 
@@ -40,3 +40,7 @@ Specify number of browser tabs / threads for program to work
 ```sh
 npx soundcloud-following-parser
 ```
+
+Program will cache collected tracks in ./data/db.json, so next time it will collect only new tracks that were posted after previous run.  
+
+Tracks that failed to add into a playlist by some reason (eg. playlist overflow, it can place only 500 tracks) will be cached also and it will try to add them to the end of a new playlist next time.

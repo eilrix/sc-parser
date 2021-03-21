@@ -1,6 +1,6 @@
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
-import { concurrentFlows, database, saveDatabase, trackDateMin, TTrack, sleep } from './constants';
+import { concurrentFlows, database, saveDatabase, trackDateMin, TTrack, sleep } from './shared';
 
 export const parseTracks = async (pages: Page[]) => {
     let isWorking = true;
