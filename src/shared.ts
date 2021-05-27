@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import { resolve } from 'path';
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
+import { Frame } from 'puppeteer/lib/cjs/puppeteer/common/FrameManager';
 
 export type TConfig = {
     email: string;
@@ -8,6 +9,7 @@ export type TConfig = {
     target: string;
     concurrency: number;
     timeRange: number;
+    headless?: boolean;
 }
 export type TTrack = {
     link: string;
@@ -41,12 +43,12 @@ export const saveDatabase = async () => await fs.outputJSON(databasePath, databa
 export const cookiesPath = resolve(process.cwd(), 'data/cookies.json');
 export const localStoragePath = resolve(process.cwd(), 'data/local-storage.json');
 
-export const waitFor = async (page: Page, selector: string) => {
+export const waitFor = async (page: Page | Frame, selector: string) => {
     await page.waitForSelector(selector, {
         timeout: 7000,
     });
 }
-export const click = async (page: Page, selector: string) => {
+export const click = async (page: Page | Frame, selector: string) => {
     await waitFor(page, selector);
     await page.click(selector);
 }

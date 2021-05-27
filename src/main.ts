@@ -16,7 +16,7 @@ const main = async () => {
     const browser = await puppeteerExtra.launch({
         args: ['--no-sandbox'],
         timeout: 1000,
-        // headless: false,
+        headless: config.headless ?? true,
         slowMo: 250,
     });
     await Promise.all(Array(config.concurrency - 1).fill(1).map(_it => browser.newPage()));

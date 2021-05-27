@@ -10,7 +10,7 @@ export const saveTracks = async (pages: Page[]) => {
     const playlistName = (command === 'continue' && database.lastPlaylist) ? database.lastPlaylist :
         new Date(Date.now()).toISOString();
 
-    if (command !== 'continue') {
+    if (!(command === 'continue' && database.lastPlaylist)) {
         await createPlaylist(pages[0], playlistName, newTracks[0]);
         database.lastPlaylist = playlistName;
         await saveDatabase();

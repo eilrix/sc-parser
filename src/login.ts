@@ -52,6 +52,13 @@ export const logIn = async (page: Page) => {
     if (success) return;
 
     await page.goto('https://soundcloud.com/');
+    await sleep(1);
+    await click('#onetrust-accept-btn-handler');
+    await sleep(1);
+    await page.evaluate(() => {
+        document.querySelector('#onetrust-consent-sdk')?.remove();
+        document.querySelector('#onetrust-banner-sdk')?.remove();
+    });
 
     await click('.frontHero__signin .frontHero__loginButton.loginButton');
     await waitFor('.modal__content .webAuthContainer iframe');
@@ -61,19 +68,23 @@ export const logIn = async (page: Page) => {
     });
     if (!iframeSrc) throw new Error('!iframeSrc');
 
-    await page.goto(iframeSrc);
+    const frames = page.frames();
+    const authFrame = frames.find(frame => frame.url() === iframeSrc);
 
-    await waitFor('#sign_in_up_email');
-    await page.focus('#sign_in_up_email');
+    if (!authFrame) throw new Error('!authFrame');
+    const frameWaitFor = (selector: string) => pageWaitFor(authFrame, selector);
+
+    await frameWaitFor('#sign_in_up_email');
+    await authFrame.focus('#sign_in_up_email');
     await page.keyboard.type(config.email, { delay: 10 });
 
-    await page.click('#sign_in_up_submit')
+    await authFrame.click('#sign_in_up_submit')
 
-    await waitFor('#enter_password_field');
-    await page.focus('#enter_password_field')
+    await frameWaitFor('#enter_password_field');
+    await authFrame.focus('#enter_password_field')
     await page.keyboard.type(config.password, { delay: 10 });
 
-    await page.click('#enter_password_submit');
+    await authFrame.click('#enter_password_submit');
     await sleep(2);
     await page.goto('https://soundcloud.com/you/library');
     await waitFor('.l-collection');

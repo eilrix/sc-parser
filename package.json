@@ -1,10 +1,11 @@
 {
   "name": "soundcloud-following-parser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "watch": "npx tsc --w",
     "build": "npx tsc",
     "start": "node build/main.js",
+    "continue": "node build/main.js continue",
     "dev": "npx ts-node src/main.ts"
   },
   "files": [
