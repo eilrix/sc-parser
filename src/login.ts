@@ -53,8 +53,12 @@ export const logIn = async (page: Page) => {
 
     await page.goto('https://soundcloud.com/');
     await sleep(1);
-    await click('#onetrust-accept-btn-handler');
-    await sleep(1);
+
+    try {
+        await click('#onetrust-accept-btn-handler');
+        await sleep(1);
+    } catch (error) { }
+
     await page.evaluate(() => {
         document.querySelector('#onetrust-consent-sdk')?.remove();
         document.querySelector('#onetrust-banner-sdk')?.remove();

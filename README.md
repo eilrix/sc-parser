@@ -20,6 +20,8 @@ Create config.json as following:
 }
 ```
 
+Account (your_soundcloud_email) must have at least one playlist
+
 #### email
 Email from Soundcloud account where playlist will be created. Create some fake account because it may get banned. 
 
