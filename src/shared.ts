@@ -65,3 +65,15 @@ export const concurrentFlows = async <T>(flowQnt: number, items: T[], worker: (i
     }
     await Promise.all(statuses);
 }
+
+export const removeAds = async (page: Page) => {
+    try {
+        await click(page, '#onetrust-accept-btn-handler');
+        await sleep(1);
+    } catch (error) { }
+
+    await page.evaluate(() => {
+        document.querySelector('#onetrust-consent-sdk')?.remove();
+        document.querySelector('#onetrust-banner-sdk')?.remove();
+    });
+}

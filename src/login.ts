@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
-import { config, cookiesPath, sleep, localStoragePath, click as pageClick, waitFor as pageWaitFor } from './shared';
+import { config, cookiesPath, sleep, localStoragePath, click as pageClick, waitFor as pageWaitFor, removeAds } from './shared';
 
 const saveSession = async (page: Page) => {
     const newCookies = await page.cookies();
@@ -45,6 +45,7 @@ const loadSession = async (page: Page): Promise<boolean> => {
 export const logIn = async (page: Page) => {
     await page.goto('https://soundcloud.com/');
     await page.bringToFront();
+    await removeAds(page);
     const waitFor = (selector: string) => pageWaitFor(page, selector);
     const click = (selector: string) => pageClick(page, selector);
 
@@ -53,16 +54,7 @@ export const logIn = async (page: Page) => {
 
     await page.goto('https://soundcloud.com/');
     await sleep(1);
-
-    try {
-        await click('#onetrust-accept-btn-handler');
-        await sleep(1);
-    } catch (error) { }
-
-    await page.evaluate(() => {
-        document.querySelector('#onetrust-consent-sdk')?.remove();
-        document.querySelector('#onetrust-banner-sdk')?.remove();
-    });
+    await removeAds(page);
 
     await click('.frontHero__signin .frontHero__loginButton.loginButton');
     await waitFor('.modal__content .webAuthContainer iframe');

@@ -1,10 +1,13 @@
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
-import { config, database, saveDatabase } from './shared';
+import { config, database, saveDatabase, removeAds, sleep } from './shared';
 
 export const parseFollowing = async (page: Page): Promise<string[]> => {
     console.log('Parsing following...')
+    await page.bringToFront();
     await page.goto(`https://soundcloud.com/${config.target}/following`);
+    await sleep(0.5);
+    await removeAds(page);
 
     const links = await page.evaluate(async () => {
         const sleep = (time: number) => new Promise(done => setTimeout(done, time * 1000));

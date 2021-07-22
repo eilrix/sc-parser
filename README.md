@@ -1,6 +1,6 @@
 # Soundcloud parser
 
-Collects all recent tracks from following profiles and makes a playlist
+Collects all recent tracks from following profiles and makes a playlist.
 
 ## Install
 Node.js v12 or above
@@ -32,7 +32,7 @@ Password from the account
 Target Soundcloud account to parse following users
 
 #### timeRange
-Collects tracks in a time range - from now and back on timeRange seconds, 5 months by default
+Collects tracks in a time range - from now and back on timeRange seconds, 5 months by default (12960000 seconds)
 
 #### concurrency
 Specify number of browser tabs / threads for program to work

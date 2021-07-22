@@ -1,6 +1,16 @@
 import { Page } from 'puppeteer/lib/cjs/puppeteer/common/Page';
 
-import { database, saveDatabase, sleep, click as pageClick, waitFor as pageWaitFor, concurrentFlows, command, TTrack } from './shared';
+import {
+    click as pageClick,
+    command,
+    concurrentFlows,
+    database,
+    removeAds,
+    saveDatabase,
+    sleep,
+    TTrack,
+    waitFor as pageWaitFor,
+} from './shared';
 
 export const saveTracks = async (pages: Page[]) => {
     const newTracks = database.unreposted.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
@@ -21,6 +31,11 @@ export const saveTracks = async (pages: Page[]) => {
     let failed = 0;
     let isWorking = true;
     let reachedLimit = false;
+
+    for (const page of pages) {
+        await page.bringToFront();
+        await removeAds(page);
+    }
 
     (async () => {
         while (isWorking) {
