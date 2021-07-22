@@ -173,7 +173,7 @@ export const saveTracks = async (pages: Page[]) => {
     });
 
     isWorking = false;
-    console.log(`\n Done! ${added} / ${newTracks.length} tracks are added. ${added} Failed to add\n`);
+    console.log(`\n Done! ${added} / ${newTracks.length} tracks are added. ${failed} Failed to add\n`);
     await saveDatabase();
 }
 

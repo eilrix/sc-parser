@@ -1,6 +1,6 @@
 {
   "name": "soundcloud-following-parser",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "scripts": {
     "watch": "npx tsc --w",
     "build": "npx tsc",
